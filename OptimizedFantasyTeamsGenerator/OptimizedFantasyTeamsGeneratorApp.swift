@@ -15,6 +15,6 @@ struct OptimizedFantasyTeamsGeneratorApp: App {
         WindowGroup {
             ContentView()
         }
-        .modelContainer(for: Item.self)
+        .modelContainer(for: Player.self)
     }
 }
