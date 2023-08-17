@@ -9,80 +9,164 @@ import Foundation
 import SwiftUI
 
 class PlayersManager {
-    func getOptimizedTeams() {
+    static var shared = PlayersManager()
+    
+    func getOptimizedTeams(starters: [Player]) -> [Team] {
+        func shouldAddThisTeam(projectedScore: Int) -> Bool {
+            if tooManyPlayersFromSameTeam() {
+                return false
+            }
+            
+            return sortedTopTeams.count < kNumberTopTeams || sortedTopTeams[0].projectedScore < projectedScore
+        }
         
+        func getTeamCost() -> Int {
+            return firstBase.cost + secondBase.cost + thirdBase.cost + shortStop.cost + outfield1.cost + outfield2.cost + outfield3.cost + pitcher1.cost + pitcher2.cost + catcher.cost
+        }
+        
+        func getTeamProjectedScore() -> Int {
+            return Int(firstBase.score + secondBase.score + thirdBase.score + shortStop.score + outfield1.score + outfield2.score + outfield3.score + pitcher1.score + pitcher2.score + catcher.score)
+        }
+        
+        func tooManyPlayersFromSameTeam() -> Bool {
+            var teamsArray: [String] = []
+            
+            teamsArray.append(firstBase.team)
+            teamsArray.append(secondBase.team)
+            teamsArray.append(thirdBase.team)
+            teamsArray.append(shortStop.team)
+            teamsArray.append(outfield1.team)
+            teamsArray.append(outfield2.team)
+            teamsArray.append(outfield3.team)
+            teamsArray.append(pitcher1.team)
+            teamsArray.append(pitcher2.team)
+            teamsArray.append(catcher.team)
+            
+            let mappedItems = teamsArray.map { ($0, 1) }
+            let counts = Dictionary(mappedItems, uniquingKeysWith: +)
+            
+            for item in counts {
+                if item.value > kMaxPlayersFromSameTeam {
+                    return true
+                }
+            }
+            
+            return false
+        }
+        
+        let kNumberTotalTopTeams = 10
+        let kMaxPlayersFromSameTeam = 5
+        var totalPossibleTeams = 0
+        let kMaxBudget = 50000
+        let kNumberTopTeams = 3
+        var sortedTopTeams: [Team] = []
+        var newTeam: Team
+        let firstBasemen    = starters.filter({$0.position == "1B"})
+        let secondBasemen   = starters.filter({$0.position == "2B"})
+        let thirdBasemen    = starters.filter({$0.position == "3B"})
+        let shortStops      = starters.filter({$0.position == "1B"})
+        let pitchers        = starters.filter({$0.position == "Pitcher"})
+        let catchers        = starters.filter({$0.position == "Catcher"})
+        let outfielders     = starters.filter({$0.position == "OF"})
+        var firstBase: Player
+        var secondBase: Player
+        var thirdBase: Player
+        var shortStop: Player
+        var catcher: Player
+        var pitcher1: Player
+        var pitcher2: Player
+        var outfield1: Player
+        var outfield2: Player
+        var outfield3: Player
+        
+        // Mark: Multithread here
+        // Build 3 top teams for each pitcher
+        for pitcher in pitchers {
+            pitcher1 = pitcher
+            for pitch in pitchers {
+                if pitch == pitcher1 {
+                    continue
+                }
+                pitcher2 = pitch
+                for firstBaseman in firstBasemen {
+                    firstBase = firstBaseman
+                    for secondBaseman in secondBasemen {
+                        secondBase = secondBaseman
+                        for thirdBaseman in thirdBasemen {
+                            thirdBase = thirdBaseman
+                            for ss in shortStops {
+                                shortStop = ss
+                                for thisCatcher in catchers {
+                                    catcher = thisCatcher
+                                   
+                                    for lf in outfielders {
+                                        outfield1 = lf
+                                        for cf in outfielders {
+                                            if cf == outfield1 {
+                                                continue
+                                            }
+                                            outfield2 = cf
+                                            
+                                            let availableOutfielders = outfielders.filter({$0.name != outfield1.name && $0.name != outfield2.name})
+                                            
+                                            // Mark: multi-task outfield3
+                                            for rf in availableOutfielders {
+                                                outfield3 = rf
+                                                
+                                                totalPossibleTeams += 1
+                                                if totalPossibleTeams % 100_000 == 0 {
+                                                    print("-----> \(totalPossibleTeams) processed")
+                                                }
+                                                let teamCost = getTeamCost()
+                                                if teamCost <= kMaxBudget {
+                                                    let projectedScore = getTeamProjectedScore()
+                                                    if shouldAddThisTeam(projectedScore: projectedScore) {
+                                                        newTeam = Team(budget: teamCost,
+                                                                       projectedScore: projectedScore,
+                                                                       firstBaseman: firstBase,
+                                                                       secondBaseman: secondBase,
+                                                                       thirdBaseman: thirdBase,
+                                                                       shortStop: shortStop,
+                                                                       outfield1: outfield1,
+                                                                       outfield2: outfield2,
+                                                                       outfield3: outfield3,
+                                                                       pitcher1: pitcher1,
+                                                                       pitcher2: pitcher2,
+                                                                       catcher: catcher)
+                                                    
+                                                        if sortedTopTeams.count == kNumberTopTeams {
+                                                            sortedTopTeams.removeFirst()
+                                                        }
+                                                        sortedTopTeams.append(newTeam)
+                                                        // Want to add to each Task's betTeams: [Team]
+                                                    }
+                                                }
+                                            }
+                                            
+                                            sortedTopTeams.sort()
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        print("total possible teams: \(totalPossibleTeams)")
+        return sortedTopTeams
     }
     
     func downloadStarters() -> [Player] {
         return getBogusStarters()
     }
 
-
     private func getBogusStarters() -> [Player] {
-        let numberPitchers = 60
-        let numberCatchers = 60
-        let numberFirstBasemen = 60
-        let numberSecondBasemen = 60
-        let numberThirdBasemen = 60
-        let numberShortStops = 60
-        let numberOutfielders = 180
-    
-        var bogusStarters: [Player] = []
-        
-        for index in 0 ..< numberPitchers {
-            let newName = "Pitcher-\(index)"
-            let teamName: String = getTeamName(index: index)
-            let cost = getCost(position: "Pitcher")
-            let newPlayer = Player(name: newName, team: teamName, cost: cost, position: "Pitcher")
-            bogusStarters.append(newPlayer)
-        }
-        
-        for index in 0 ..< numberCatchers {
-            let newName = "Catcher-\(index)"
-            let teamName: String = getTeamName(index: index)
-            let cost = getCost(position: "Catcher")
-            let newPlayer = Player(name: newName, team: teamName, cost: cost, position: "Catcher")
-            bogusStarters.append(newPlayer)
-        }
-        
-        for index in 0 ..< numberFirstBasemen {
-            let newName = "1B-\(index)"
-            let teamName: String = getTeamName(index: index)
-            let cost = getCost(position: "1B")
-            let newPlayer = Player(name: newName, team: teamName, cost: cost, position: "1B")
-            bogusStarters.append(newPlayer)
-        }
-        
-        for index in 0 ..< numberSecondBasemen {
-            let newName = "2B-\(index)"
-            let teamName: String = getTeamName(index: index)
-            let cost = getCost(position: "2B")
-            let newPlayer = Player(name: newName, team: teamName, cost: cost, position: "2B")
-            bogusStarters.append(newPlayer)
-        }
-        
-        for index in 0 ..< numberThirdBasemen {
-            let newName = "3B-\(index)"
-            let teamName: String = getTeamName(index: index)
-            let cost = getCost(position: "3B")
-            let newPlayer = Player(name: newName, team: teamName, cost: cost, position: "3b")
-            bogusStarters.append(newPlayer)
-        }
-        
-        for index in 0 ..< numberShortStops {
-            let newName = "SS-\(index)"
-            let teamName: String = getTeamName(index: index)
-            let cost = getCost(position: "SS")
-            let newPlayer = Player(name: newName, team: teamName, cost: cost, position: "SS")
-            bogusStarters.append(newPlayer)
-        }
-        
-        for index in 0 ..< numberOutfielders {
-            let newName = "OF-\(index)"
-            let teamName: String = getTeamName(index: index / 3)
-            let cost = getCost(position: "OF")
-            let newPlayer = Player(name: newName, team: teamName, cost: cost, position: "OF")
-            bogusStarters.append(newPlayer)
+        /// Uses BEST Evolved Predictor to iterate through players calculating their predictedFantasyScore for today's game
+        func getPrediction() -> Double {
+            let intValue = Int.random(in: 5...69)
+            return Double(intValue)
         }
         
         func getCost(position: String) -> Int {
@@ -101,84 +185,130 @@ class PlayersManager {
             return cost * 100
         }
         
-        func getTeamName(index: Int) -> String {
-            switch index {
-            case 0: fallthrough
-            case 1: return "Orioles"
-            case 2: fallthrough
-            case 3: return "Rays"
-            case 4: fallthrough
-            case 5: return "Blue Jays"
-            case 6: fallthrough
-            case 7: return "Red Sox"
-            case 8: fallthrough
-            case 9: return "Yankees"
-            case 10: fallthrough
-            case 11: return "Twins"
-            case 12: fallthrough
-            case 13: return "Guardians"
-            case 14: fallthrough
-            case 15: return "Tigers"
-            case 16: fallthrough
-            case 17: return "White Sox"
-            case 18: fallthrough
-            case 19: return "Royals"
-            case 20: fallthrough
-            case 21: return "Rangers"
-            case 22: fallthrough
-            case 23: return "Astros"
-            case 24: fallthrough
-            case 25: return "Mariners"
-            case 26: fallthrough
-            case 27: return "Angels"
-            case 28: fallthrough
-            case 29: return "As"
-            case 30: fallthrough
-            case 31: return "Braves"
-            case 32: fallthrough
-            case 33: return "Phillies"
-            case 34: fallthrough
-            case 35: return "Marlins"
-            case 36: fallthrough
-            case 37: return "Mets"
-            case 38: fallthrough
-            case 39: return "Nationals"
-            case 40: fallthrough
-            case 41: return "Brewers"
-            case 42: fallthrough
-            case 43: return "Cubs"
-            case 44: fallthrough
-            case 45: return "Reds"
-            case 46: fallthrough
-            case 47: return "Pirates"
-            case 48: fallthrough
-            case 49: return "Cardinals"
-            case 50: fallthrough
-            case 51: return "Angels"
-            case 52: fallthrough
-            case 53: return "Giants"
-            case 54: fallthrough
-            case 55: return "Diamondbacks"
-            case 56: fallthrough
-            case 57: return "Padres"
-            case 58: fallthrough
-            case 59: return "Rockies"
-            default: return ""
-            }
+        func getTeamName() -> String {
+            return Teams.allCases.randomElement()?.rawValue ?? ""
+        }
+        
+        let kNumberPitchers = 5
+        let kNumberCatchers = 4
+        let kNumberFirstBasemen = 4
+        let kNumberSecondBasemen = 4
+        let kNumberThirdBasemen = 4
+        let kNumberShortStops = 4
+        let kNumberOutfielders = 4
+        var bogusStarters: [Player] = []
+        
+        for index in 0 ..< kNumberPitchers {
+            let newName = "Pitcher-\(index)"
+            let teamName: String = getTeamName()
+            let newPlayer = Player(name: newName,
+                                   team: teamName,
+                                   cost: getCost(position: "Pitcher"),
+                                   score: getPrediction(),
+                                   position: "Pitcher")
+            bogusStarters.append(newPlayer)
+        }
+        
+        for index in 0 ..< kNumberCatchers {
+            let newName = "Catcher-\(index)"
+            let teamName: String = getTeamName()
+            let newPlayer = Player(name: newName,
+                                   team: teamName,
+                                   cost: getCost(position: "Catcher"),
+                                   score: getPrediction(),
+                                   position: "Catcher")
+            bogusStarters.append(newPlayer)
+        }
+        
+        for index in 0 ..< kNumberFirstBasemen {
+            let newName = "1B-\(index)"
+            let teamName: String = getTeamName()
+            let newPlayer = Player(name: newName,
+                                   team: teamName,
+                                   cost: getCost(position: "1B"),
+                                   score: getPrediction(),
+                                   position: "1B")
+            bogusStarters.append(newPlayer)
+        }
+        
+        for index in 0 ..< kNumberSecondBasemen {
+            let newName = "2B-\(index)"
+            let teamName: String = getTeamName()
+            let newPlayer = Player(name: newName,
+                                   team: teamName,
+                                   cost: getCost(position: "2B"),
+                                   score: getPrediction(),
+                                   position: "2B")
+            bogusStarters.append(newPlayer)
+        }
+        
+        for index in 0 ..< kNumberThirdBasemen {
+            let newName = "3B-\(index)"
+            let teamName: String = getTeamName()
+            let newPlayer = Player(name: newName,
+                                   team: teamName,
+                                   cost: getCost(position: "3B"),
+                                   score: getPrediction(),
+                                   position: "3B")
+            bogusStarters.append(newPlayer)
+        }
+        
+        for index in 0 ..< kNumberShortStops {
+            let newName = "SS-\(index)"
+            let teamName: String = getTeamName()
+            let newPlayer = Player(name: newName,
+                                   team: teamName,
+                                   cost: getCost(position: "SS"),
+                                   score: getPrediction(),
+                                   position: "SS")
+            bogusStarters.append(newPlayer)
+        }
+        
+        for index in 0 ..< kNumberOutfielders {
+            let newName = "OF-\(index)"
+            let teamName: String = getTeamName()
+            let newPlayer = Player(name: newName,
+                                   team: teamName,
+                                   cost: getCost(position: "OF"),
+                                   score: getPrediction(),
+                                   position: "OF")
+            
+            bogusStarters.append(newPlayer)
         }
         
         return bogusStarters
     }
     
-    /// Uses BEST Evolved Predictor to iterate through players calculating their predictedFantasyScore for today's game
-    func getPredictionsForStarters() {
-       
-    }
+    init() {}
     
-    var isDownloading: Bool
-    
-    init() {
-        self.isDownloading = false
+    enum Teams: String, CaseIterable {
+        case rockies = "Rockies"
+        case padres = "Padres"
+        case diamondbacks = "Diamondbacks"
+        case giants = "Giants"
+        case cardinals = "Cardinals"
+        case pirates = "Pirates"
+        case reds = "Reds"
+        case cubs = "Cubs"
+        case brewers = "Brewers"
+        case nationals = "Nationals"
+        case marlins = "Marlins"
+        case phillies = "Phillies"
+        case braves = "Braves"
+        case athletics = "Athletics"
+        case angels = "Angels"
+        case mariners = "Mariners"
+        case royals = "Royals"
+        case astros = "Astros"
+        case rangers = "Rangers"
+        case whiteSox = "White Sox"
+        case tigers = "Tigers"
+        case guardians = "Guardians"
+        case twins = "Twins"
+        case redSox = "Red Sox"
+        case blueJays = "Blue Jays"
+        case rays = "Rays"
+        case orioles = "Orioles"
     }
 }
 

@@ -6,13 +6,54 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct BestTeamsView: View {
+    @Query private var starters: [Player]
+    var sortedTeams: [Team]
+    let playersManager = PlayersManager.shared
+    
+    init(teams: [Team]) {
+        sortedTeams = teams
+    }
+    
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        List(sortedTeams) { team in
+            TeamView(team: team)
+        }
     }
 }
 
-#Preview {
-    BestTeamsView()
+struct TeamView: View {
+    var team: Team
+    
+    init(team: Team) {
+        self.team = team
+    }
+    
+    var body: some View {
+        VStack{
+            VStack {
+                Text("Cost: \(team.budget)")
+                Text("Projected Score: \(team.projectedScore)")
+                Divider()
+            }
+            VStack {
+                Text(team.pitcher1?.name ?? "")
+                Text(team.pitcher2?.name ?? "")
+                Text(team.catcher?.name ?? "")
+                Text(team.firstBaseman?.name ?? "")
+                Text(team.secondBaseman?.name ?? "")
+                Text(team.thirdBaseman?.name ?? "")
+                Text(team.shortStop?.name ?? "")
+                Text(team.outfield1?.name ?? "")
+                Text(team.outfield2?.name ?? "")
+                Text(team.outfield3?.name ?? "")
+            }
+        }
+    }
 }
+
+//#Preview {
+//    BestTeamsView(teams: playersManager.getOptimizedTeams(starters: starters))
+//}

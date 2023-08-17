@@ -18,6 +18,8 @@
 		7AA31D682A8972E50015DD65 /* PlayersManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AA31D672A8972E50015DD65 /* PlayersManager.swift */; };
 		7AA31DA22A8A9E430015DD65 /* DownloadManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AA31DA12A8A9E430015DD65 /* DownloadManager.swift */; };
 		7AA31DA42A8AA4A20015DD65 /* StartersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AA31DA32A8AA4A20015DD65 /* StartersView.swift */; };
+		7AA31DA62A8AC8A00015DD65 /* BestTeamsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AA31DA52A8AC8A00015DD65 /* BestTeamsView.swift */; };
+		7AA31DA82A8AEB290015DD65 /* Team.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AA31DA72A8AEB290015DD65 /* Team.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -54,6 +56,8 @@
 		7AA31D672A8972E50015DD65 /* PlayersManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayersManager.swift; sourceTree = "<group>"; };
 		7AA31DA12A8A9E430015DD65 /* DownloadManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadManager.swift; sourceTree = "<group>"; };
 		7AA31DA32A8AA4A20015DD65 /* StartersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartersView.swift; sourceTree = "<group>"; };
+		7AA31DA52A8AC8A00015DD65 /* BestTeamsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BestTeamsView.swift; sourceTree = "<group>"; };
+		7AA31DA72A8AEB290015DD65 /* Team.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Team.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -109,6 +113,8 @@
 				7AA31DA12A8A9E430015DD65 /* DownloadManager.swift */,
 				7AA31D3B2A896E880015DD65 /* ContentView.swift */,
 				7AA31DA32A8AA4A20015DD65 /* StartersView.swift */,
+				7AA31DA52A8AC8A00015DD65 /* BestTeamsView.swift */,
+				7AA31DA72A8AEB290015DD65 /* Team.swift */,
 				7AA31D3D2A896E890015DD65 /* Assets.xcassets */,
 				7AA31D422A896E890015DD65 /* Player.swift */,
 				7AA31D442A896E890015DD65 /* OptimizedFantasyTeamsGenerator.entitlements */,
@@ -273,9 +279,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7AA31DA62A8AC8A00015DD65 /* BestTeamsView.swift in Sources */,
 				7AA31D3C2A896E880015DD65 /* ContentView.swift in Sources */,
 				7AA31DA22A8A9E430015DD65 /* DownloadManager.swift in Sources */,
 				7AA31D432A896E890015DD65 /* Player.swift in Sources */,
+				7AA31DA82A8AEB290015DD65 /* Team.swift in Sources */,
 				7AA31D682A8972E50015DD65 /* PlayersManager.swift in Sources */,
 				7AA31DA42A8AA4A20015DD65 /* StartersView.swift in Sources */,
 				7AA31D3A2A896E880015DD65 /* OptimizedFantasyTeamsGeneratorApp.swift in Sources */,

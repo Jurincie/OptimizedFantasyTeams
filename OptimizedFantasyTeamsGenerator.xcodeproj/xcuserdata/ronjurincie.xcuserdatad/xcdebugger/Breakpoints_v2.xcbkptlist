@@ -3,4 +3,54 @@
    uuid = "71CA43E6-85F9-4AE3-BAE0-1882722A5BE3"
    type = "1"
    version = "2.0">
+   <Breakpoints>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "3D36C14F-37A9-47B2-8996-DE000D7EC5CE"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "OptimizedFantasyTeamsGenerator/PlayersManager.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "118"
+            endingLineNumber = "118"
+            landmarkName = "getOptimizedTeams(starters:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "3D36C14F-37A9-47B2-8996-DE000D7EC5CE - 247b8e3b7e630c71"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "OptimizedFantasyTeamsGenerator.PlayersManager.getOptimizedTeams(starters: Swift.Array&lt;OptimizedFantasyTeamsGenerator.Player&gt;) -&gt; Swift.Array&lt;OptimizedFantasyTeamsGenerator.Team&gt;"
+                  moduleName = "OptimizedFantasyTeamsGenerator"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/ronjurincie/Desktop/XCode/OptimizedFantasyTeamsGenerator/OptimizedFantasyTeamsGenerator/PlayersManager.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "118"
+                  endingLineNumber = "118"
+                  offsetFromSymbolStart = "4252">
+               </Location>
+               <Location
+                  uuid = "3D36C14F-37A9-47B2-8996-DE000D7EC5CE - 247b8e3b7e630c71"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "OptimizedFantasyTeamsGenerator.PlayersManager.getOptimizedTeams(starters: Swift.Array&lt;OptimizedFantasyTeamsGenerator.Player&gt;) -&gt; Swift.Array&lt;OptimizedFantasyTeamsGenerator.Team&gt;"
+                  moduleName = "OptimizedFantasyTeamsGenerator"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/ronjurincie/Desktop/XCode/OptimizedFantasyTeamsGenerator/OptimizedFantasyTeamsGenerator/PlayersManager.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "118"
+                  endingLineNumber = "118"
+                  offsetFromSymbolStart = "4228">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+   </Breakpoints>
 </Bucket>
