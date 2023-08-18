@@ -12,77 +12,49 @@ class PlayersManager {
     static var shared = PlayersManager()
     
     func getOptimizedTeams(starters: [Player]) -> [Team] {
-        func shouldAddThisTeam(projectedScore: Int) -> Bool {
-            if tooManyPlayersFromSameTeam() {
+        func getBestTeamsWithThisPitcher(pitcher1: Player) -> [Team] {
+            func shouldAddThisTeam(projectedScore: Int) -> Bool {
+                if tooManyPlayersFromSameTeam() {
+                    return false
+                }
+                
+                return sortedTopTeams.count < kNumberTopTeams || sortedTopTeams[0].projectedScore < projectedScore
+            }
+            
+            func tooManyPlayersFromSameTeam() -> Bool {
+                var teamsArray: [String] = [firstBase.team, secondBase.team, thirdBase.team, shortStop.team, outfield1.team, outfield2.team, outfield3.team, pitcher1.team, pitcher2.team, catcher.team]
+                
+                let mappedItems = teamsArray.map { ($0, 1) }
+                let counts = Dictionary(mappedItems, uniquingKeysWith: +)
+                
+                for item in counts {
+                    if item.value > kMaxPlayersFromSameTeam {
+                        return true
+                    }
+                }
+                
                 return false
             }
             
-            return sortedTopTeams.count < kNumberTopTeams || sortedTopTeams[0].projectedScore < projectedScore
-        }
-        
-        func getTeamCost() -> Int {
-            return firstBase.cost + secondBase.cost + thirdBase.cost + shortStop.cost + outfield1.cost + outfield2.cost + outfield3.cost + pitcher1.cost + pitcher2.cost + catcher.cost
-        }
-        
-        func getTeamProjectedScore() -> Int {
-            return Int(firstBase.score + secondBase.score + thirdBase.score + shortStop.score + outfield1.score + outfield2.score + outfield3.score + pitcher1.score + pitcher2.score + catcher.score)
-        }
-        
-        func tooManyPlayersFromSameTeam() -> Bool {
-            var teamsArray: [String] = []
-            
-            teamsArray.append(firstBase.team)
-            teamsArray.append(secondBase.team)
-            teamsArray.append(thirdBase.team)
-            teamsArray.append(shortStop.team)
-            teamsArray.append(outfield1.team)
-            teamsArray.append(outfield2.team)
-            teamsArray.append(outfield3.team)
-            teamsArray.append(pitcher1.team)
-            teamsArray.append(pitcher2.team)
-            teamsArray.append(catcher.team)
-            
-            let mappedItems = teamsArray.map { ($0, 1) }
-            let counts = Dictionary(mappedItems, uniquingKeysWith: +)
-            
-            for item in counts {
-                if item.value > kMaxPlayersFromSameTeam {
-                    return true
-                }
+            func getTeamCost() -> Int {
+                return firstBase.cost + secondBase.cost + thirdBase.cost + shortStop.cost + outfield1.cost + outfield2.cost + outfield3.cost + pitcher1.cost + pitcher2.cost + catcher.cost
             }
             
-            return false
-        }
-        
-        let kNumberTotalTopTeams = 10
-        let kMaxPlayersFromSameTeam = 5
-        var totalPossibleTeams = 0
-        let kMaxBudget = 50000
-        let kNumberTopTeams = 3
-        var sortedTopTeams: [Team] = []
-        var newTeam: Team
-        let firstBasemen    = starters.filter({$0.position == "1B"})
-        let secondBasemen   = starters.filter({$0.position == "2B"})
-        let thirdBasemen    = starters.filter({$0.position == "3B"})
-        let shortStops      = starters.filter({$0.position == "1B"})
-        let pitchers        = starters.filter({$0.position == "Pitcher"})
-        let catchers        = starters.filter({$0.position == "Catcher"})
-        let outfielders     = starters.filter({$0.position == "OF"})
-        var firstBase: Player
-        var secondBase: Player
-        var thirdBase: Player
-        var shortStop: Player
-        var catcher: Player
-        var pitcher1: Player
-        var pitcher2: Player
-        var outfield1: Player
-        var outfield2: Player
-        var outfield3: Player
-        
-        // Mark: Multithread here
-        // Build 3 top teams for each pitcher
-        for pitcher in pitchers {
-            pitcher1 = pitcher
+            func getTeamProjectedScore() -> Int {
+                return Int(firstBase.score + secondBase.score + thirdBase.score + shortStop.score + outfield1.score + outfield2.score + outfield3.score + pitcher1.score + pitcher2.score + catcher.score)
+            }
+            
+            var thisPitchersBestTeams: [Team] = []
+            var firstBase: Player
+            var secondBase: Player
+            var thirdBase: Player
+            var shortStop: Player
+            var catcher: Player
+            var pitcher2: Player
+            var outfield1: Player
+            var outfield2: Player
+            var outfield3: Player
+                
             for pitch in pitchers {
                 if pitch == pitcher1 {
                     continue
@@ -98,7 +70,7 @@ class PlayersManager {
                                 shortStop = ss
                                 for thisCatcher in catchers {
                                     catcher = thisCatcher
-                                   
+                                    
                                     for lf in outfielders {
                                         outfield1 = lf
                                         for cf in outfielders {
@@ -106,13 +78,9 @@ class PlayersManager {
                                                 continue
                                             }
                                             outfield2 = cf
-                                            
                                             let availableOutfielders = outfielders.filter({$0.name != outfield1.name && $0.name != outfield2.name})
-                                            
-                                            // Mark: multi-task outfield3
                                             for rf in availableOutfielders {
                                                 outfield3 = rf
-                                                
                                                 totalPossibleTeams += 1
                                                 if totalPossibleTeams % 100_000 == 0 {
                                                     print("-----> \(totalPossibleTeams) processed")
@@ -133,17 +101,14 @@ class PlayersManager {
                                                                        pitcher1: pitcher1,
                                                                        pitcher2: pitcher2,
                                                                        catcher: catcher)
-                                                    
-                                                        if sortedTopTeams.count == kNumberTopTeams {
-                                                            sortedTopTeams.removeFirst()
+                                                        
+                                                        if thisPitchersBestTeams.count == kNumberTopTeams {
+                                                            thisPitchersBestTeams.removeFirst()
                                                         }
-                                                        sortedTopTeams.append(newTeam)
-                                                        // Want to add to each Task's betTeams: [Team]
+                                                        thisPitchersBestTeams.append(newTeam!)
                                                     }
                                                 }
                                             }
-                                            
-                                            sortedTopTeams.sort()
                                         }
                                     }
                                 }
@@ -152,10 +117,38 @@ class PlayersManager {
                     }
                 }
             }
+        
+            return thisPitchersBestTeams.sorted()
         }
         
+        let kNumberTotalTopTeams = 10
+        let kMaxPlayersFromSameTeam = 5
+        var totalPossibleTeams = 0
+        let kMaxBudget = 50000
+        let kNumberTopTeams = 3
+        var sortedTopTeams: [Team] = []
+        var newTeam: Team?
+        let firstBasemen    = starters.filter({$0.position == "1B"})
+        let secondBasemen   = starters.filter({$0.position == "2B"})
+        let thirdBasemen    = starters.filter({$0.position == "3B"})
+        let shortStops      = starters.filter({$0.position == "1B"})
+        let pitchers        = starters.filter({$0.position == "Pitcher"})
+        let catchers        = starters.filter({$0.position == "Catcher"})
+        let outfielders     = starters.filter({$0.position == "OF"})
+       
+        for pitcher in pitchers {
+            let thisPitchersBestTeams = getBestTeamsWithThisPitcher(pitcher1: pitcher)
+            sortedTopTeams.append(contentsOf: thisPitchersBestTeams)
+        }
+            
         print("total possible teams: \(totalPossibleTeams)")
-        return sortedTopTeams
+        
+        // ONLY return 10 best teams
+//        if sortedTopTeams.count > kNumberTotalTopTeams {
+//            sortedTopTeams.removeSubrange(10...)
+//        }
+        
+        return sortedTopTeams.sorted()
     }
     
     func downloadStarters() -> [Player] {
@@ -189,13 +182,13 @@ class PlayersManager {
             return Teams.allCases.randomElement()?.rawValue ?? ""
         }
         
-        let kNumberPitchers = 5
+        let kNumberPitchers = 8
         let kNumberCatchers = 4
         let kNumberFirstBasemen = 4
         let kNumberSecondBasemen = 4
         let kNumberThirdBasemen = 4
         let kNumberShortStops = 4
-        let kNumberOutfielders = 4
+        let kNumberOutfielders = 6
         var bogusStarters: [Player] = []
         
         for index in 0 ..< kNumberPitchers {

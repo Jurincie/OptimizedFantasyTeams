@@ -7,20 +7,20 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "3D36C14F-37A9-47B2-8996-DE000D7EC5CE"
-            shouldBeEnabled = "No"
+            uuid = "D8A17B6C-012B-4DB6-B435-1F4981F99A29"
+            shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "OptimizedFantasyTeamsGenerator/PlayersManager.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "118"
-            endingLineNumber = "118"
+            startingLineNumber = "151"
+            endingLineNumber = "151"
             landmarkName = "getOptimizedTeams(starters:)"
             landmarkType = "7">
             <Locations>
                <Location
-                  uuid = "3D36C14F-37A9-47B2-8996-DE000D7EC5CE - 247b8e3b7e630c71"
+                  uuid = "D8A17B6C-012B-4DB6-B435-1F4981F99A29 - 247b8e3b7e630051"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
@@ -30,12 +30,12 @@
                   urlString = "file:///Users/ronjurincie/Desktop/XCode/OptimizedFantasyTeamsGenerator/OptimizedFantasyTeamsGenerator/PlayersManager.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "118"
-                  endingLineNumber = "118"
-                  offsetFromSymbolStart = "4252">
+                  startingLineNumber = "150"
+                  endingLineNumber = "150"
+                  offsetFromSymbolStart = "1800">
                </Location>
                <Location
-                  uuid = "3D36C14F-37A9-47B2-8996-DE000D7EC5CE - 247b8e3b7e630c71"
+                  uuid = "D8A17B6C-012B-4DB6-B435-1F4981F99A29 - 247b8e3b7e6301b2"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
@@ -45,9 +45,9 @@
                   urlString = "file:///Users/ronjurincie/Desktop/XCode/OptimizedFantasyTeamsGenerator/OptimizedFantasyTeamsGenerator/PlayersManager.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "118"
-                  endingLineNumber = "118"
-                  offsetFromSymbolStart = "4228">
+                  startingLineNumber = "151"
+                  endingLineNumber = "151"
+                  offsetFromSymbolStart = "1820">
                </Location>
             </Locations>
          </BreakpointContent>
