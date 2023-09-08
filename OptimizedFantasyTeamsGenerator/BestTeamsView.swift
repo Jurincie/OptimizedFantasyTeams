@@ -10,16 +10,15 @@ import SwiftData
 
 struct BestTeamsView: View {
     @Query private var starters: [Player]
-    var sortedTeams: [Team]
+    @State private var sortedTeams: [Team] = []
     let playersManager = PlayersManager.shared
-    
-    init(teams: [Team]) {
-        sortedTeams = teams
-    }
     
     var body: some View {
         List(sortedTeams) { team in
             TeamView(team: team)
+        }.task {
+            let best = await playersManager.getOptimizedTeams(starters: starters)
+            sortedTeams.append(contentsOf: best)
         }
     }
 }

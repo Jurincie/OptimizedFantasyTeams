@@ -11,18 +11,49 @@ import SwiftUI
 class PlayersManager {
     static var shared = PlayersManager()
     
-    func getOptimizedTeams(starters: [Player]) -> [Team] {
-        func getBestTeamsWithThisPitcher(pitcher1: Player) -> [Team] {
+    init() {}
+    
+    func getOptimizedTeams(starters: [Player]) async -> [Team] {
+        let kMaxPlayersFromSameTeam = 5
+        let kMaxBudget = 50000
+        let firstBasemen    = starters.filter({$0.position == "1B"})
+        let secondBasemen   = starters.filter({$0.position == "2B"})
+        let thirdBasemen    = starters.filter({$0.position == "3B"})
+        let shortStops      = starters.filter({$0.position == "1B"})
+        let pitchers        = starters.filter({$0.position == "Pitcher"})
+        let catchers        = starters.filter({$0.position == "Catcher"})
+        let outfielders     = starters.filter({$0.position == "OF"})
+        
+        // Here we use swift concurrency to use max cores via TaskGroup
+        let best = await withTaskGroup(of: Team.self) { group -> [Team] in
+            for pitcher in pitchers {
+                group.addTask {
+                    return await getBestTeamWithThisPitcher(pitcher1: pitcher)
+                }
+            }
+            
+            var bestTeams = [Team]()
+            
+            for await value in group {
+                bestTeams.append(value)
+            }
+            
+            return bestTeams
+        }
+        
+        return best.sorted()
+        
+        @Sendable func getBestTeamWithThisPitcher(pitcher1: Player) async -> Team {
             func shouldAddThisTeam(projectedScore: Int) -> Bool {
                 if tooManyPlayersFromSameTeam() {
                     return false
+                } else {
+                    return true
                 }
-                
-                return sortedTopTeams.count < kNumberTopTeams || sortedTopTeams[0].projectedScore < projectedScore
             }
             
             func tooManyPlayersFromSameTeam() -> Bool {
-                var teamsArray: [String] = [firstBase.team, secondBase.team, thirdBase.team, shortStop.team, outfield1.team, outfield2.team, outfield3.team, pitcher1.team, pitcher2.team, catcher.team]
+                let teamsArray: [String] = [firstBase.team, secondBase.team, thirdBase.team, shortStop.team, outfield1.team, outfield2.team, outfield3.team, pitcher1.team, pitcher2.team, catcher.team]
                 
                 let mappedItems = teamsArray.map { ($0, 1) }
                 let counts = Dictionary(mappedItems, uniquingKeysWith: +)
@@ -44,7 +75,6 @@ class PlayersManager {
                 return Int(firstBase.score + secondBase.score + thirdBase.score + shortStop.score + outfield1.score + outfield2.score + outfield3.score + pitcher1.score + pitcher2.score + catcher.score)
             }
             
-            var thisPitchersBestTeams: [Team] = []
             var firstBase: Player
             var secondBase: Player
             var thirdBase: Player
@@ -54,6 +84,8 @@ class PlayersManager {
             var outfield1: Player
             var outfield2: Player
             var outfield3: Player
+            var newTeam: Team?
+            var bestTeam: Team?
                 
             for pitch in pitchers {
                 if pitch == pitcher1 {
@@ -81,10 +113,7 @@ class PlayersManager {
                                             let availableOutfielders = outfielders.filter({$0.name != outfield1.name && $0.name != outfield2.name})
                                             for rf in availableOutfielders {
                                                 outfield3 = rf
-                                                totalPossibleTeams += 1
-                                                if totalPossibleTeams % 100_000 == 0 {
-                                                    print("-----> \(totalPossibleTeams) processed")
-                                                }
+                                                
                                                 let teamCost = getTeamCost()
                                                 if teamCost <= kMaxBudget {
                                                     let projectedScore = getTeamProjectedScore()
@@ -102,10 +131,13 @@ class PlayersManager {
                                                                        pitcher2: pitcher2,
                                                                        catcher: catcher)
                                                         
-                                                        if thisPitchersBestTeams.count == kNumberTopTeams {
-                                                            thisPitchersBestTeams.removeFirst()
+                                                        if bestTeam == nil {
+                                                            bestTeam = newTeam!
+                                                        } else {
+                                                            if newTeam!.projectedScore > bestTeam!.projectedScore {
+                                                                bestTeam = newTeam!
+                                                            }
                                                         }
-                                                        thisPitchersBestTeams.append(newTeam!)
                                                     }
                                                 }
                                             }
@@ -118,44 +150,16 @@ class PlayersManager {
                 }
             }
         
-            return thisPitchersBestTeams.sorted()
+            return bestTeam!
         }
-        
-        let kNumberTotalTopTeams = 10
-        let kMaxPlayersFromSameTeam = 5
-        var totalPossibleTeams = 0
-        let kMaxBudget = 50000
-        let kNumberTopTeams = 3
-        var sortedTopTeams: [Team] = []
-        var newTeam: Team?
-        let firstBasemen    = starters.filter({$0.position == "1B"})
-        let secondBasemen   = starters.filter({$0.position == "2B"})
-        let thirdBasemen    = starters.filter({$0.position == "3B"})
-        let shortStops      = starters.filter({$0.position == "1B"})
-        let pitchers        = starters.filter({$0.position == "Pitcher"})
-        let catchers        = starters.filter({$0.position == "Catcher"})
-        let outfielders     = starters.filter({$0.position == "OF"})
-       
-        for pitcher in pitchers {
-            let thisPitchersBestTeams = getBestTeamsWithThisPitcher(pitcher1: pitcher)
-            sortedTopTeams.append(contentsOf: thisPitchersBestTeams)
-        }
-            
-        print("total possible teams: \(totalPossibleTeams)")
-        
-        // ONLY return 10 best teams
-//        if sortedTopTeams.count > kNumberTotalTopTeams {
-//            sortedTopTeams.removeSubrange(10...)
-//        }
-        
-        return sortedTopTeams.sorted()
     }
+            
     
     func downloadStarters() -> [Player] {
         return getBogusStarters()
     }
 
-    private func getBogusStarters() -> [Player] {
+    func getBogusStarters() -> [Player] {
         /// Uses BEST Evolved Predictor to iterate through players calculating their predictedFantasyScore for today's game
         func getPrediction() -> Double {
             let intValue = Int.random(in: 5...69)
@@ -182,13 +186,13 @@ class PlayersManager {
             return Teams.allCases.randomElement()?.rawValue ?? ""
         }
         
-        let kNumberPitchers = 8
+        let kNumberPitchers = 5
         let kNumberCatchers = 4
         let kNumberFirstBasemen = 4
         let kNumberSecondBasemen = 4
         let kNumberThirdBasemen = 4
         let kNumberShortStops = 4
-        let kNumberOutfielders = 6
+        let kNumberOutfielders = 5
         var bogusStarters: [Player] = []
         
         for index in 0 ..< kNumberPitchers {
@@ -271,8 +275,6 @@ class PlayersManager {
         
         return bogusStarters
     }
-    
-    init() {}
     
     enum Teams: String, CaseIterable {
         case rockies = "Rockies"

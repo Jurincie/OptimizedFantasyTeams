@@ -11,19 +11,15 @@ import SwiftData
 struct StartersView: View {
     @Environment(\.modelContext) private var modelContext
     @Query private var starters: [Player]
-    @State private var showingSheet = false
     var count = 0
     var playersManager = PlayersManager()
     
     var body: some View {
         VStack {
-            Button("Get Optimal Teams") {
-                showingSheet.toggle()
-            }
-            .font(.largeTitle)
-            .buttonStyle(.borderedProminent)
-            .sheet(isPresented: $showingSheet) {
-                BestTeamsView(teams: playersManager.getOptimizedTeams(starters: starters))
+            NavigationLink {
+                BestTeamsView()
+            } label: {
+                Text("Calculate Best Teams")
             }
             Spacer()
             List(starters) { starter in
@@ -53,10 +49,6 @@ struct StartersView: View {
             print("\(starter.name)")
             addPlayer(player: starter)
         }
-    }
-    
-    func getOptimalTeamsForTodaysGames() {
-        
     }
 }
 
