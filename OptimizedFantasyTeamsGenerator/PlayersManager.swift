@@ -27,8 +27,12 @@ class PlayersManager {
         // Here we use swift concurrency to use max cores via TaskGroup
         let best = await withTaskGroup(of: Team.self) { group -> [Team] in
             for pitcher in pitchers {
+                // Since no team will ever make it from the HighestInexPitcher skip him
+                if getPositionIndex(pitcher.name) >= pitchers.count - 1 {
+                    continue
+                }
                 group.addTask {
-                    return await getBestTeamWithThisPitcher(pitcher1: pitcher)
+                    return await getBestTeamWithThisPitcher(firstPitcher: pitcher)
                 }
             }
             
@@ -43,55 +47,32 @@ class PlayersManager {
         
         return best.sorted()
         
-        @Sendable func getBestTeamWithThisPitcher(pitcher1: Player) async -> Team {
-            func shouldAddThisTeam(projectedScore: Int) -> Bool {
-                if tooManyPlayersFromSameTeam() {
-                    return false
-                } else {
-                    return true
-                }
-            }
-            
-            func tooManyPlayersFromSameTeam() -> Bool {
-                let teamsArray: [String] = [firstBase.team, secondBase.team, thirdBase.team, shortStop.team, outfield1.team, outfield2.team, outfield3.team, pitcher1.team, pitcher2.team, catcher.team]
-                
-                let mappedItems = teamsArray.map { ($0, 1) }
-                let counts = Dictionary(mappedItems, uniquingKeysWith: +)
-                
-                for item in counts {
-                    if item.value > kMaxPlayersFromSameTeam {
-                        return true
-                    }
-                }
-                
-                return false
-            }
-            
-            func getTeamCost() -> Int {
-                return firstBase.cost + secondBase.cost + thirdBase.cost + shortStop.cost + outfield1.cost + outfield2.cost + outfield3.cost + pitcher1.cost + pitcher2.cost + catcher.cost
-            }
-            
-            func getTeamProjectedScore() -> Int {
-                return Int(firstBase.score + secondBase.score + thirdBase.score + shortStop.score + outfield1.score + outfield2.score + outfield3.score + pitcher1.score + pitcher2.score + catcher.score)
-            }
-            
+        // Mark: func methods
+        @Sendable func getBestTeamWithThisPitcher(firstPitcher: Player) async -> Team {
             var firstBase: Player
             var secondBase: Player
             var thirdBase: Player
             var shortStop: Player
             var catcher: Player
-            var pitcher2: Player
+            var secondPitcher: Player
             var outfield1: Player
             var outfield2: Player
             var outfield3: Player
             var newTeam: Team?
             var bestTeam: Team?
-                
-            for pitch in pitchers {
-                if pitch == pitcher1 {
+            
+            // to avoid duplicate teams we only allow teams where implied index of pitcher1 < pitcher2
+            for pitcher2 in pitchers {
+                let firstPitcherIndex = getPositionIndex(firstPitcher.name)
+                let secondPitcherIndex = getPositionIndex(pitcher2.name)
+
+                if secondPitcherIndex <= firstPitcherIndex {
                     continue
                 }
-                pitcher2 = pitch
+                
+                print("\(Thread.current) -> 1st: \(firstPitcherIndex) --- 2nd: \(secondPitcherIndex)")
+
+                secondPitcher = pitcher2
                 for firstBaseman in firstBasemen {
                     firstBase = firstBaseman
                     for secondBaseman in secondBasemen {
@@ -102,17 +83,18 @@ class PlayersManager {
                                 shortStop = ss
                                 for thisCatcher in catchers {
                                     catcher = thisCatcher
-                                    
-                                    for lf in outfielders {
-                                        outfield1 = lf
-                                        for cf in outfielders {
-                                            if cf == outfield1 {
+                                    for of1 in outfielders {
+                                        outfield1 = of1
+                                        for of2 in outfielders {
+                                            if getPositionIndex(of2.name) <= getPositionIndex(outfield1.name) {
                                                 continue
                                             }
-                                            outfield2 = cf
-                                            let availableOutfielders = outfielders.filter({$0.name != outfield1.name && $0.name != outfield2.name})
-                                            for rf in availableOutfielders {
-                                                outfield3 = rf
+                                            outfield2 = of2
+                                            for of3 in outfielders {
+                                                if getPositionIndex(of3.name) <= getPositionIndex(outfield2.name) {
+                                                    continue
+                                                }
+                                                outfield3 = of3
                                                 
                                                 let teamCost = getTeamCost()
                                                 if teamCost <= kMaxBudget {
@@ -127,7 +109,7 @@ class PlayersManager {
                                                                        outfield1: outfield1,
                                                                        outfield2: outfield2,
                                                                        outfield3: outfield3,
-                                                                       pitcher1: pitcher1,
+                                                                       pitcher1: firstPitcher,
                                                                        pitcher2: pitcher2,
                                                                        catcher: catcher)
                                                         
@@ -150,11 +132,44 @@ class PlayersManager {
                 }
             }
         
+            assert(bestTeam != nil, "No Team made it")
             return bestTeam!
+            
+            // Mark: func methods
+            func shouldAddThisTeam(projectedScore: Int) -> Bool {
+                if tooManyPlayersFromSameTeam() {
+                    return false
+                } else {
+                    return true
+                }
+            }
+            
+            func tooManyPlayersFromSameTeam() -> Bool {
+                let teamsArray: [String] = [firstBase.team, secondBase.team, thirdBase.team, shortStop.team, outfield1.team, outfield2.team, outfield3.team, firstPitcher.team, secondPitcher.team, catcher.team]
+                
+                let mappedItems = teamsArray.map { ($0, 1) }
+                let counts = Dictionary(mappedItems, uniquingKeysWith: +)
+                
+                for item in counts {
+                    if item.value > kMaxPlayersFromSameTeam {
+                        return true
+                    }
+                }
+                
+                return false
+            }
+            
+            func getTeamCost() -> Int {
+                return firstBase.cost + secondBase.cost + thirdBase.cost + shortStop.cost + outfield1.cost + outfield2.cost + outfield3.cost + firstPitcher.cost + secondPitcher.cost + catcher.cost
+            }
+            
+            func getTeamProjectedScore() -> Int {
+                return Int(firstBase.score + secondBase.score + thirdBase.score + shortStop.score + outfield1.score + outfield2.score + outfield3.score + firstPitcher.score + secondPitcher.score + catcher.score)
+            }
+            
         }
     }
-            
-    
+
     func downloadStarters() -> [Player] {
         return getBogusStarters()
     }
@@ -186,13 +201,13 @@ class PlayersManager {
             return Teams.allCases.randomElement()?.rawValue ?? ""
         }
         
-        let kNumberPitchers = 5
-        let kNumberCatchers = 4
-        let kNumberFirstBasemen = 4
-        let kNumberSecondBasemen = 4
-        let kNumberThirdBasemen = 4
-        let kNumberShortStops = 4
-        let kNumberOutfielders = 5
+        let kNumberPitchers = 8
+        let kNumberCatchers = 5
+        let kNumberFirstBasemen = 5
+        let kNumberSecondBasemen = 5
+        let kNumberThirdBasemen = 5
+        let kNumberShortStops = 5
+        let kNumberOutfielders = 8
         var bogusStarters: [Player] = []
         
         for index in 0 ..< kNumberPitchers {
@@ -274,6 +289,16 @@ class PlayersManager {
         }
         
         return bogusStarters
+    }
+    
+    /// - Parameter name: String of the form: "Pitcher-1", "OF-6", "Pitcher-12" etc.
+    /// - Returns: number contained in string AFTER the only "-" character
+    private func getPositionIndex(_ name: String) -> Int {
+        guard name.count > 3 else { return 0 }
+            
+        let splitStrings = name.split(separator: "-")
+        assert(splitStrings.count == 2, "Illegal name argument")
+        return Int(splitStrings[1])!
     }
     
     enum Teams: String, CaseIterable {

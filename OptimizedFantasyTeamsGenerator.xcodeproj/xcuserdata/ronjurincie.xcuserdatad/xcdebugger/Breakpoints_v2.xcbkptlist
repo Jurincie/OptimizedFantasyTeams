@@ -7,94 +7,125 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "515E09E8-73EA-4D5F-ACC8-981C7D42FD86"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "OptimizedFantasyTeamsGenerator/PlayersManager.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "41"
-            endingLineNumber = "41"
-            landmarkName = "getOptimizedTeams(starters:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "E2B6A5FB-3766-46A7-AB58-7FBFF01DA206"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "OptimizedFantasyTeamsGenerator/StartersView.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "20"
-            endingLineNumber = "20"
-            landmarkName = "body"
-            landmarkType = "24">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "0F420416-57F2-491D-9A4A-CC4C47C4AB60"
+            uuid = "0D61DA20-F70C-47F0-827A-117A263672B5"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "OptimizedFantasyTeamsGenerator/BestTeamsView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "21"
-            endingLineNumber = "21"
+            startingLineNumber = "37"
+            endingLineNumber = "37"
             landmarkName = "body"
             landmarkType = "24">
             <Locations>
                <Location
-                  uuid = "0F420416-57F2-491D-9A4A-CC4C47C4AB60 - f471f37c68ddc878"
+                  uuid = "0D61DA20-F70C-47F0-827A-117A263672B5 - de09baf5c3b6ed71"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "(1) suspend resume partial function for closure #2 @Sendable () async -&gt; () in OptimizedFantasyTeamsGenerator.BestTeamsView.body.getter : some"
+                  symbolName = "OptimizedFantasyTeamsGenerator.TeamView.init(team: OptimizedFantasyTeamsGenerator.Team) -&gt; OptimizedFantasyTeamsGenerator.TeamView"
                   moduleName = "OptimizedFantasyTeamsGenerator"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/ronjurincie/Desktop/XCode/OptimizedFantasyTeamsGenerator/OptimizedFantasyTeamsGenerator/BestTeamsView.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "20"
-                  endingLineNumber = "20"
-                  offsetFromSymbolStart = "100">
+                  startingLineNumber = "38"
+                  endingLineNumber = "38"
+                  offsetFromSymbolStart = "272">
                </Location>
                <Location
-                  uuid = "0F420416-57F2-491D-9A4A-CC4C47C4AB60 - 82ec21da0c2e2f55"
+                  uuid = "0D61DA20-F70C-47F0-827A-117A263672B5 - b5d87d368e866853"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "(2) await resume partial function for closure #2 @Sendable () async -&gt; () in OptimizedFantasyTeamsGenerator.BestTeamsView.body.getter : some"
+                  symbolName = "(3) suspend resume partial function for closure #3 @Sendable () async -&gt; () in closure #1 () -&gt; SwiftUI.TupleView&lt;(Swift.Optional&lt;SwiftUI.ProgressView&lt;SwiftUI.Text, SwiftUI.EmptyView&gt;&gt;, &lt;&lt;opaque return type of SwiftUI.View.task(priority: Swift.TaskPriority, _: @Sendable () async -&gt; ()) -&gt; some&gt;&gt;.0)&gt; in OptimizedFantasyTeamsGenerator.BestTeamsView.body.getter : some"
                   moduleName = "OptimizedFantasyTeamsGenerator"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/ronjurincie/Desktop/XCode/OptimizedFantasyTeamsGenerator/OptimizedFantasyTeamsGenerator/BestTeamsView.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "20"
-                  endingLineNumber = "20"
-                  offsetFromSymbolStart = "44">
+                  startingLineNumber = "37"
+                  endingLineNumber = "37"
+                  offsetFromSymbolStart = "1072">
                </Location>
                <Location
-                  uuid = "0F420416-57F2-491D-9A4A-CC4C47C4AB60 - 4f200ed371f4b47a"
+                  uuid = "0D61DA20-F70C-47F0-827A-117A263672B5 - b5d87d368e866853"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "(3) suspend resume partial function for closure #2 @Sendable () async -&gt; () in OptimizedFantasyTeamsGenerator.BestTeamsView.body.getter : some"
+                  symbolName = "(3) suspend resume partial function for closure #3 @Sendable () async -&gt; () in closure #1 () -&gt; SwiftUI.TupleView&lt;(Swift.Optional&lt;SwiftUI.ProgressView&lt;SwiftUI.Text, SwiftUI.EmptyView&gt;&gt;, &lt;&lt;opaque return type of SwiftUI.View.task(priority: Swift.TaskPriority, _: @Sendable () async -&gt; ()) -&gt; some&gt;&gt;.0)&gt; in OptimizedFantasyTeamsGenerator.BestTeamsView.body.getter : some"
                   moduleName = "OptimizedFantasyTeamsGenerator"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/ronjurincie/Desktop/XCode/OptimizedFantasyTeamsGenerator/OptimizedFantasyTeamsGenerator/BestTeamsView.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "20"
-                  endingLineNumber = "20"
-                  offsetFromSymbolStart = "92">
+                  startingLineNumber = "37"
+                  endingLineNumber = "37"
+                  offsetFromSymbolStart = "1056">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "269779E0-942C-4BA3-9F32-100A624CC96C"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "OptimizedFantasyTeamsGenerator/PlayersManager.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "135"
+            endingLineNumber = "135"
+            landmarkName = "getBestTeamWithThisPitcher(firstPitcher:)"
+            landmarkType = "9">
+            <Locations>
+               <Location
+                  uuid = "269779E0-942C-4BA3-9F32-100A624CC96C - 8ceff4446d3a7da4"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(1) suspend resume partial function for getBestTeamWithThisPitcher@Sendable (firstPitcher: OptimizedFantasyTeamsGenerator.Player) async -&gt; OptimizedFantasyTeamsGenerator.Team"
+                  moduleName = "OptimizedFantasyTeamsGenerator"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/ronjurincie/Desktop/XCode/OptimizedFantasyTeamsGenerator/OptimizedFantasyTeamsGenerator/PlayersManager.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "136"
+                  endingLineNumber = "136"
+                  offsetFromSymbolStart = "17164">
+               </Location>
+               <Location
+                  uuid = "269779E0-942C-4BA3-9F32-100A624CC96C - 8ceff4446d3a7c45"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(1) suspend resume partial function for getBestTeamWithThisPitcher@Sendable (firstPitcher: OptimizedFantasyTeamsGenerator.Player) async -&gt; OptimizedFantasyTeamsGenerator.Team"
+                  moduleName = "OptimizedFantasyTeamsGenerator"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/ronjurincie/Desktop/XCode/OptimizedFantasyTeamsGenerator/OptimizedFantasyTeamsGenerator/PlayersManager.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "135"
+                  endingLineNumber = "135"
+                  offsetFromSymbolStart = "16884">
+               </Location>
+               <Location
+                  uuid = "269779E0-942C-4BA3-9F32-100A624CC96C - 8ceff4446d3a7c45"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(1) suspend resume partial function for getBestTeamWithThisPitcher@Sendable (firstPitcher: OptimizedFantasyTeamsGenerator.Player) async -&gt; OptimizedFantasyTeamsGenerator.Team"
+                  moduleName = "OptimizedFantasyTeamsGenerator"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/ronjurincie/Desktop/XCode/OptimizedFantasyTeamsGenerator/OptimizedFantasyTeamsGenerator/PlayersManager.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "135"
+                  endingLineNumber = "135"
+                  offsetFromSymbolStart = "17024">
                </Location>
             </Locations>
          </BreakpointContent>
